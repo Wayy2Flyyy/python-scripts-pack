@@ -46,3 +46,4 @@ def pretty_kv_print(data: dict[str, str], sort_keys: bool = False) -> None:
     key_width = max(len(key) for key, _ in items)
     for key, value in items:
         print(f"{key.ljust(key_width)}: {value}")
+
