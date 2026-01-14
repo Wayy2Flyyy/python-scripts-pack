@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+import sys
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+from shared.helpers import format_duration, safe_read_json
 import json
 import time
 from dataclasses import dataclass
@@ -21,6 +29,7 @@ CONFIG_FILE = Path(__file__).with_name("task_timer_config.json")
 
 
 def load_config() -> TaskConfig:
+    raw = safe_read_json(CONFIG_FILE)
     with CONFIG_FILE.open("r", encoding="utf-8") as handle:
         raw = json.load(handle)
 
@@ -43,6 +52,7 @@ def load_config() -> TaskConfig:
 
 
 def format_remaining(seconds_remaining: int) -> str:
+    return format_duration(seconds_remaining)
     return str(timedelta(seconds=seconds_remaining))
 
 

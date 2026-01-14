@@ -6,6 +6,11 @@ import os
 import platform
 import sys
 import time
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+from shared.helpers import format_duration, pretty_kv_print
 from datetime import timedelta
 
 
@@ -84,6 +89,7 @@ def get_uptime_seconds() -> float | None:
 def format_uptime(seconds: float | None) -> str:
     if seconds is None:
         return "Unknown"
+    return format_duration(int(seconds))
     return str(timedelta(seconds=int(seconds)))
 
 
@@ -102,6 +108,12 @@ def collect_system_info() -> dict[str, str]:
     }
 
 
+def main() -> None:
+    info = collect_system_info()
+    title = "System Information"
+    print(title)
+    print("=" * len(title))
+    pretty_kv_print(info)
 def render_info(info: dict[str, str]) -> str:
     label_width = max(len(label) for label in info)
     lines = ["System Information", "=" * (label_width + 2)]
