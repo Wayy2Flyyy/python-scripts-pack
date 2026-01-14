@@ -1,0 +1,6 @@
+{
+  "task_name": "Focus session",
+  "duration_minutes": 1,
+  "alert_on_complete": true,
+  "update_interval_seconds": 10
+}

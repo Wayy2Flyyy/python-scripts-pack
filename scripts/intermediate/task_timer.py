@@ -1,0 +1,81 @@
+"""Simple configurable task timer."""
+
+from __future__ import annotations
+
+import json
+import time
+from dataclasses import dataclass
+from datetime import timedelta
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class TaskConfig:
+    task_name: str
+    duration_minutes: int
+    alert_on_complete: bool
+    update_interval_seconds: int
+
+
+CONFIG_FILE = Path(__file__).with_name("task_timer_config.json")
+
+
+def load_config() -> TaskConfig:
+    with CONFIG_FILE.open("r", encoding="utf-8") as handle:
+        raw = json.load(handle)
+
+    task_name = str(raw.get("task_name", "Task"))
+    duration_minutes = int(raw.get("duration_minutes", 1))
+    alert_on_complete = bool(raw.get("alert_on_complete", True))
+    update_interval_seconds = int(raw.get("update_interval_seconds", 60))
+
+    if duration_minutes < 1:
+        duration_minutes = 1
+    if update_interval_seconds < 1:
+        update_interval_seconds = 1
+
+    return TaskConfig(
+        task_name=task_name,
+        duration_minutes=duration_minutes,
+        alert_on_complete=alert_on_complete,
+        update_interval_seconds=update_interval_seconds,
+    )
+
+
+def format_remaining(seconds_remaining: int) -> str:
+    return str(timedelta(seconds=seconds_remaining))
+
+
+def run_timer(config: TaskConfig) -> None:
+    total_seconds = config.duration_minutes * 60
+    end_time = time.monotonic() + total_seconds
+    next_update = time.monotonic()
+
+    print(f"Starting '{config.task_name}' for {config.duration_minutes} minutes.")
+
+    while True:
+        now = time.monotonic()
+        remaining = max(0, int(end_time - now))
+        if now >= next_update or remaining == 0:
+            print(f"Remaining: {format_remaining(remaining)}")
+            next_update = now + config.update_interval_seconds
+        if remaining == 0:
+            break
+        time.sleep(1)
+
+
+def notify_complete(config: TaskConfig) -> None:
+    if config.alert_on_complete:
+        print(f"'{config.task_name}' complete! ✅")
+    else:
+        print(f"'{config.task_name}' complete.")
+
+
+def main() -> None:
+    config = load_config()
+    run_timer(config)
+    notify_complete(config)
+
+
+if __name__ == "__main__":
+    main()
