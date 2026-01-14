@@ -1,0 +1,21 @@
+{
+  "enabled_plugins": [
+    "hash_tool",
+    "text_stats",
+    "file_tree"
+  ],
+  "plugin_settings": {
+    "hash_tool": {
+      "input_text": "Hello from plugin runner",
+      "algorithm": "sha256"
+    },
+    "text_stats": {
+      "input_text": "Hello from plugin runner\nSecond line"
+    },
+    "file_tree": {
+      "root_path": ".",
+      "max_depth": 2,
+      "include_files": true
+    }
+  }
+}
