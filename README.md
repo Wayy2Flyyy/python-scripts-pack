@@ -53,3 +53,5 @@ New scripts will be added over time, ranging from small utilities to more advanc
 - Installable package (`pip install`)
 - CLI commands for selected scripts
 - Shared utilities and refactoring
+
+# SO PLEASE PLEASE PLEASE MAKE THESE SCRIPTS YOUR OWN AND SEND THEM MY WAY!!!
