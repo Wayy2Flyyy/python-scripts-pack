@@ -23,14 +23,17 @@ def format_bytes(bytes_count: int, precision: int = 2) -> str:
     Format byte count into human-readable string.
     
     Args:
-        bytes_count: Number of bytes
+        bytes_count: Number of bytes (must be non-negative)
         precision: Decimal places for display
         
     Returns:
         Formatted string like "1.5 MB" or "3.2 GB"
+        
+    Raises:
+        ValueError: If bytes_count is negative
     """
     if bytes_count < 0:
-        bytes_count = 0
+        raise ValueError(f"Byte count must be non-negative, got {bytes_count}")
     
     units = ["B", "KB", "MB", "GB", "TB", "PB"]
     unit_index = 0

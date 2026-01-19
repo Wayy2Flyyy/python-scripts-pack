@@ -81,35 +81,33 @@ def analyze_json(json_str: str) -> dict[str, str]:
     except json.JSONDecodeError as e:
         return {"Error": str(e)}
     
-    def count_elements(obj: object, depth: int = 0) -> dict[str, int]:
-        """Recursively count JSON elements."""
-        counts = {"objects": 0, "arrays": 0, "max_depth": depth}
+    # Use iterative approach with a stack to avoid recursion depth issues
+    objects_count = 0
+    arrays_count = 0
+    max_depth = 0
+    
+    # Stack contains tuples of (object, depth)
+    stack = [(data, 0)]
+    
+    while stack:
+        obj, depth = stack.pop()
+        max_depth = max(max_depth, depth)
         
         if isinstance(obj, dict):
-            counts["objects"] += 1
+            objects_count += 1
             for value in obj.values():
-                child_counts = count_elements(value, depth + 1)
-                counts["objects"] += child_counts["objects"]
-                counts["arrays"] += child_counts["arrays"]
-                counts["max_depth"] = max(counts["max_depth"], child_counts["max_depth"])
+                stack.append((value, depth + 1))
         
         elif isinstance(obj, list):
-            counts["arrays"] += 1
+            arrays_count += 1
             for item in obj:
-                child_counts = count_elements(item, depth + 1)
-                counts["objects"] += child_counts["objects"]
-                counts["arrays"] += child_counts["arrays"]
-                counts["max_depth"] = max(counts["max_depth"], child_counts["max_depth"])
-        
-        return counts
-    
-    counts = count_elements(data)
+                stack.append((item, depth + 1))
     
     return {
         "Type": type(data).__name__,
-        "Objects": str(counts["objects"]),
-        "Arrays": str(counts["arrays"]),
-        "Max Depth": str(counts["max_depth"]),
+        "Objects": str(objects_count),
+        "Arrays": str(arrays_count),
+        "Max Depth": str(max_depth),
         "Size (chars)": str(len(json_str)),
         "Size (formatted)": str(len(json.dumps(data, indent=2))),
     }

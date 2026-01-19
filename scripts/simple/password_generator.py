@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import secrets
 import string
 
@@ -82,7 +83,6 @@ def estimate_strength(password: str) -> str:
         charset_size += 22
     
     # Calculate entropy bits: log2(charset_size^length)
-    import math
     if charset_size > 0:
         entropy = length * math.log2(charset_size)
     else:
