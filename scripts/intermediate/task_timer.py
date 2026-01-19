@@ -10,11 +10,6 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from shared.helpers import format_duration, safe_read_json
-import json
-import time
-from dataclasses import dataclass
-from datetime import timedelta
-from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -30,8 +25,6 @@ CONFIG_FILE = Path(__file__).with_name("task_timer_config.json")
 
 def load_config() -> TaskConfig:
     raw = safe_read_json(CONFIG_FILE)
-    with CONFIG_FILE.open("r", encoding="utf-8") as handle:
-        raw = json.load(handle)
 
     task_name = str(raw.get("task_name", "Task"))
     duration_minutes = int(raw.get("duration_minutes", 1))
@@ -53,7 +46,6 @@ def load_config() -> TaskConfig:
 
 def format_remaining(seconds_remaining: int) -> str:
     return format_duration(seconds_remaining)
-    return str(timedelta(seconds=seconds_remaining))
 
 
 def run_timer(config: TaskConfig) -> None:
