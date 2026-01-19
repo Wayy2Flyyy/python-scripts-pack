@@ -64,7 +64,11 @@ class DirectoryMonitor:
         pattern = "**/*" if self.recursive else "*"
         for path in self.directory.glob(pattern):
             if path.is_file():
-                self.snapshots[path] = FileSnapshot.from_path(path)
+                try:
+                    self.snapshots[path] = FileSnapshot.from_path(path)
+                except (OSError, PermissionError):
+                    # Skip files that cannot be accessed
+                    continue
     
     def check_changes(self) -> list[ChangeEvent]:
         """
@@ -83,7 +87,12 @@ class DirectoryMonitor:
                 continue
             
             current_files.add(path)
-            current_snapshot = FileSnapshot.from_path(path)
+            
+            try:
+                current_snapshot = FileSnapshot.from_path(path)
+            except (OSError, PermissionError):
+                # Skip files that cannot be accessed
+                continue
             
             if path not in self.snapshots:
                 # New file

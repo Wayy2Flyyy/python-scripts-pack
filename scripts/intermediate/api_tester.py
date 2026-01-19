@@ -16,6 +16,10 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from shared.helpers import pretty_kv_print
 
 
+# Configuration
+MAX_RESPONSE_DISPLAY_LENGTH = 2000  # Maximum characters to display in response body
+
+
 @dataclass
 class APIResponse:
     """Represents an API response."""
@@ -119,8 +123,8 @@ def print_response(response: APIResponse, show_headers: bool = False) -> None:
     print("-" * 50)
     formatted_body = format_json_body(response.body)
     # Truncate very long responses
-    if len(formatted_body) > 2000:
-        print(formatted_body[:2000])
+    if len(formatted_body) > MAX_RESPONSE_DISPLAY_LENGTH:
+        print(formatted_body[:MAX_RESPONSE_DISPLAY_LENGTH])
         print(f"\n... (truncated, {len(formatted_body)} total chars)")
     else:
         print(formatted_body)

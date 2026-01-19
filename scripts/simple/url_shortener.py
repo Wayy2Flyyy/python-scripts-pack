@@ -8,6 +8,15 @@ import urllib.request
 from pathlib import Path
 
 
+def validate_url(url: str) -> bool:
+    """Check if URL is valid."""
+    try:
+        result = urllib.parse.urlparse(url)
+        return all([result.scheme, result.netloc])
+    except Exception:
+        return False
+
+
 def shorten_url(long_url: str) -> str:
     """
     Shorten a URL using TinyURL API.
@@ -31,7 +40,10 @@ def shorten_url(long_url: str) -> str:
     try:
         with urllib.request.urlopen(api_url, timeout=10) as response:
             if response.status == 200:
-                short_url = response.read().decode("utf-8")
+                short_url = response.read().decode("utf-8").strip()
+                # Validate the response is a valid URL
+                if not validate_url(short_url):
+                    raise ValueError(f"API returned invalid URL: {short_url}")
                 return short_url
             else:
                 raise ValueError(f"API returned status {response.status}")
@@ -39,15 +51,6 @@ def shorten_url(long_url: str) -> str:
         raise ValueError(f"Failed to shorten URL: {e}") from e
     except Exception as e:
         raise ValueError(f"Unexpected error: {e}") from e
-
-
-def validate_url(url: str) -> bool:
-    """Check if URL is valid."""
-    try:
-        result = urllib.parse.urlparse(url)
-        return all([result.scheme, result.netloc])
-    except Exception:
-        return False
 
 
 def main() -> None:
