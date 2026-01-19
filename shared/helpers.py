@@ -18,6 +18,37 @@ def format_duration(seconds: int) -> str:
     return f"{minutes}m {secs:02d}s"
 
 
+def format_bytes(bytes_count: int, precision: int = 2) -> str:
+    """
+    Format byte count into human-readable string.
+    
+    Args:
+        bytes_count: Number of bytes (must be non-negative)
+        precision: Decimal places for display
+        
+    Returns:
+        Formatted string like "1.5 MB" or "3.2 GB"
+        
+    Raises:
+        ValueError: If bytes_count is negative
+    """
+    if bytes_count < 0:
+        raise ValueError(f"Byte count must be non-negative, got {bytes_count}")
+    
+    units = ["B", "KB", "MB", "GB", "TB", "PB"]
+    unit_index = 0
+    size = float(bytes_count)
+    
+    while size >= 1024.0 and unit_index < len(units) - 1:
+        size /= 1024.0
+        unit_index += 1
+    
+    if unit_index == 0:  # Bytes - no decimal
+        return f"{int(size)} {units[unit_index]}"
+    
+    return f"{size:.{precision}f} {units[unit_index]}"
+
+
 def safe_read_json(path: str | Path) -> dict[str, Any]:
     """Read JSON from a file path, raising a clear ValueError on failure."""
     json_path = Path(path)
